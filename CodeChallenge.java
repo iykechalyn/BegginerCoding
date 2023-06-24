@@ -6,13 +6,12 @@ import java.util.Scanner;
 public class CodeChallenge {
 	int userGuess;
 	int randNumber;
-	int numOfAttempts = 0;
+	int guessCounter;
 	int lowerRange;
 	int upperRange;
-	int totalMark = 0;
-	double userScore = 0;
-	double userScoreCalc;
-	int rangeDiffereceMark;
+	int maxGuessOptions;
+	double userScore;
+	int rangeDifferece;
 	final double percentage = 100;
 	Scanner sc = new Scanner(System.in);
 
@@ -22,51 +21,62 @@ public class CodeChallenge {
 				+ "\nInstruction: Chose a range of number from 1 and above. \nThe difference bwteen the upper and the lower range must not be less than 10"
 				+ "\nThe computer will generate a secrete number within the range and you are required to guess the number in not more than 5 attempts\n");
 		System.out.println("Choose your number range ");
-		System.out.print("Lower range:  ");
-		lowerRange = sc.nextInt();
-		System.out.print("Uper range:  ");
-		upperRange = sc.nextInt();
-		rangeDiffereceMark = upperRange - lowerRange;
-		totalMark += rangeDiffereceMark;
 
+		lowerRange = errHandler("Lower range:  ");
+
+		upperRange = errHandler("Uper range: ");
+
+		maxGuessOptions = upperRange - lowerRange;
+	}
+
+	public int errHandler(String message) {
+		while (true) {
+			try {
+				Scanner input = new Scanner(System.in);
+				System.out.print(message);
+				return Integer.parseInt(input.nextLine());
+			} catch (NumberFormatException nf) {
+				System.out.println("Invalid input");
+			}
+		}
 	}
 
 	public void score() {
 
-		userScore = ((totalMark - (numOfAttempts - 1)) / totalMark) * percentage;
-		System.out.println(userScore + "%");
+		userScore = ((maxGuessOptions - (guessCounter - 1)) / (double) maxGuessOptions) * percentage;
+		System.out.println();
+		System.out.println(
+				String.format("Congratulations! You guessed the number %s in %s attempts. " + "\nYour score is %.2f",
+						randNumber, guessCounter, userScore) + "%");
 	}
 
 	public void guess() {
-		try {
-			do {
 
-				System.out.print("Take a guess: ");
-
-				userGuess = sc.nextInt();
-				numOfAttempts++;
-				if (userGuess < lowerRange || userGuess > upperRange) {
-					System.out.println("The guess is out of range");
-				} else if (userGuess == randNumber) {
-					System.out.println("Congratulations! You guessed the number " + randNumber + " in " + numOfAttempts
-							+ " attempts");
-
-					break;
-				} else if (userGuess > randNumber) {
-					System.out.println("Too high!");
-					continue;
-				} else if (userGuess < randNumber) {
-					System.out.println("Too low");
+		do {
+			userGuess = errHandler("Take a guess: ");
+			guessCounter++;
+			if (guessCounter >= 5 && userGuess != randNumber) {
+				if (randNumber % 2 == 0) {
+					System.out.println(" Clue: the number is an even number");
+				} else {
+					System.out.println("Clue: number is an even odd");
 				}
+			} else if (userGuess < lowerRange || userGuess > upperRange)
 
-			} while (randNumber != userGuess);
-			score();
+			{
+				System.out.println("The guess is out of range");
+			} else if (userGuess == randNumber) {
+				break;
+			} else if (userGuess > randNumber) {
+				System.out.println("Too high!");
+				continue;
+			} else if (userGuess < randNumber) {
+				System.out.println("Too low");
+			}
 
-		} catch (Exception e) {
-			System.out.println("Wromg input ");
+		} while (randNumber != userGuess);
+		score();
 
-		}
-		sc.close();
 	}
 
 	public int getRandomNum() {
