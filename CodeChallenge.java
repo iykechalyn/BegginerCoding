@@ -100,7 +100,7 @@ public class CodeChallenge {
 
 				+ "\nI'm thinking of a number between " + obj.lowerRange + " and " + obj.upperRange + "\n");
 		obj.getRandomNum();
-		obj.checkResult();
+		//obj.checkResult(); This only exist for the purpose of testing
 
 		obj.guess();
 
